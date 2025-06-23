@@ -1,19 +1,280 @@
+<!DOCTYPE html>
 <html>
-
 <head>
-    <style>
-        @import url(common.css);
-        @import url(index.css);
-    </style>
-    <script type="text/tiscript">
-            include "common.tis";
-            include "msgbox.tis";
-            include "ab.tis";
-            include "index.tis";
-        </script>
+  <meta charset="utf-8"/>
+  <title>PalDesk Remote</title>
+  <style>
+    body {
+      margin: 0;
+      background: #233047;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #F7F7F7;
+    }
+    .header {
+      width: 100%;
+      background: #254080;
+      padding: 16px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      margin-left: 32px;
+    }
+    .logo img {
+      width: 34px;
+      height: 34px;
+      margin-right: 12px;
+    }
+    .logo h1 {
+      font-size: 1.4em;
+      margin: 0;
+      color: #53C1DE;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+    }
+    .actions {
+      margin-right: 32px;
+    }
+    .actions button {
+      background: #334a7a;
+      color: #53C1DE;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .actions button:hover {
+      background: #466aa7;
+    }
+    .main {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: 44px;
+    }
+    .panel {
+      background: #254080;
+      border-radius: 12px;
+      padding: 26px 22px 18px 22px;
+      min-width: 290px;
+      max-width: 340px;
+      display: inline-block;
+      vertical-align: top;
+    }
+    #localPanel {
+      margin-right: 32px;
+    }
+    .panel-title {
+      font-size: 1.17em;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #53C1DE;
+    }
+    .field-label {
+      font-size: 0.97em;
+      margin-bottom: 2px;
+      color: #9BC7DD;
+    }
+    .readonly-field {
+      background: #203047;
+      border: 1px solid #334a7a;
+      color: #fff;
+      padding: 8px 10px;
+      border-radius: 5px;
+      font-size: 1.08em;
+      width: 100%;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .readonly-field .copy-btn {
+      background: #53C1DE;
+      color: #254080;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.85em;
+      padding: 3px 8px;
+      margin-left: 8px;
+    }
+    .readonly-field .copy-btn:hover {
+      background: #fff;
+    }
+    .input-field {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 5px;
+      border: 1px solid #334a7a;
+      background: #233257;
+      color: #fff;
+      font-size: 1em;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .input-field:focus {
+      border-color: #53C1DE;
+    }
+    .main-btn {
+      width: 100%;
+      padding: 12px;
+      background: #53C1DE;
+      border: none;
+      color: #fff;
+      font-size: 1.15em;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .main-btn:hover {
+      background: #48b8d1;
+    }
+    .footer {
+      margin-top: 48px;
+      text-align: center;
+      font-size: 0.98em;
+      color: #888;
+      padding-bottom: 18px;
+    }
+    @media (max-width: 800px) {
+      .main {
+        flex-direction: column;
+        align-items: center;
+      }
+      #localPanel {
+        margin-right: 0;
+        margin-bottom: 24px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-</body>
+  <div class="header">
+    <div class="logo">
+      <img src="data:image/svg+xml;utf8,<svg width='36' height='36' viewBox='0 0 36 36' fill='none' xmlns='http://www.w3.org/2000/svg'><rect width='36' height='36' rx='8' fill='%2353C1DE'/><circle cx='18' cy='18' r='9' fill='white'/></svg>" alt="PalDesk Logo"/>
+      <h1>PalDesk Remote</h1>
+    </div>
+    <div class="actions">
+      <button onclick="showComingSoon('File Transfer')">File Transfer</button>
+      <button onclick="showComingSoon('Settings')">Settings</button>
+      <button onclick="showComingSoon('Help')">Help</button>
+    </div>
+  </div>
+  <div class="main">
+    <!-- Left: Your ID and password -->
+    <div class="panel" id="localPanel">
+      <div class="panel-title">Your Access</div>
+      <div class="field-label">Your ID</div>
+      <div class="readonly-field">
+        <span id="localId">Loading...</span>
+        <button class="copy-btn" onclick="copyText('localId')">Copy</button>
+      </div>
+      <div class="field-label">Password</div>
+      <div class="readonly-field">
+        <span id="localPass">Loading...</span>
+        <button class="copy-btn" onclick="copyText('localPass')">Copy</button>
+      </div>
+      <div style="margin-top:10px; font-size:0.97em; color:#aaa;">
+        Share your ID and password for others to access your device.
+      </div>
+    </div>
+    <!-- Right: Connect to remote -->
+    <div class="panel" id="remotePanel">
+      <div class="panel-title">Connect to Partner</div>
+      <div class="field-label">Partner ID</div>
+      <input id="partnerId" class="input-field" type="text" placeholder="Enter partner's ID"/>
+      <div class="field-label">Password</div>
+      <input id="partnerPass" class="input-field" type="password" placeholder="Enter partner's password"/>
+      <button class="main-btn" onclick="connect()">Connect</button>
+      <div id="connectStatus" style="margin-top:10px;color:#53C1DE;min-height:20px;"></div>
+    </div>
+  </div>
+  <div class="footer">
+    &copy; 2025 PalDesk &mdash; Modern Remote Desktop. Inspired by AnyDesk and RustDesk.
+  </div>
+  <script type="text/javascript">
+    // --- Integration with RustDesk backend via Sciter's view object ---
 
+    // Update local ID and password on load
+    function updateLocalInfo() {
+      // These functions are provided by RustDesk's backend via Sciter
+      if (typeof view !== "undefined" && view.getID && view.getPassword) {
+        document.getElementById('localId').innerText = view.getID();
+        document.getElementById('localPass').innerText = view.getPassword();
+      } else {
+        // fallback/demo
+        document.getElementById('localId').innerText = "Unavailable";
+        document.getElementById('localPass').innerText = "Unavailable";
+      }
+    }
+
+    // Copy text to clipboard
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      try {
+        // Sciter provides clipboard API, but fallback to execCommand for demo
+        if (typeof view !== "undefined" && view.copyText) {
+          view.copyText(text);
+        } else {
+          var temp = document.createElement('input');
+          document.body.appendChild(temp);
+          temp.value = text;
+          temp.select();
+          document.execCommand('copy');
+          document.body.removeChild(temp);
+        }
+      } catch(e) {}
+      showStatus(elementId === 'localId' ? 'ID copied!' : 'Password copied!');
+    }
+
+    // Connect to remote partner using RustDesk backend
+    function connect() {
+      let id = document.getElementById('partnerId').value.trim();
+      let pass = document.getElementById('partnerPass').value.trim();
+      if(!id || !pass) {
+        showStatus('Please enter partner ID and password.');
+        return;
+      }
+      if (typeof view !== "undefined" && view.connectToPartner) {
+        // This will invoke Rust backend connection logic!
+        view.connectToPartner(id, pass);
+        showStatus('Connecting to ' + id + '...');
+      } else {
+        showStatus('Backend not available.');
+      }
+    }
+
+    // Show status messages
+    function showStatus(msg) {
+      let status = document.getElementById('connectStatus');
+      status.innerText = msg;
+      setTimeout(() => { status.innerText = ''; }, 2000);
+    }
+
+    // Show coming soon for buttons
+    function showComingSoon(feature) {
+      showStatus(feature + ' coming soon...');
+    }
+
+    // Receive connection status from backend (Rust calls JS)
+    function onConnectStatus(status) {
+      showStatus(status);
+    }
+
+    // RustDesk calls this to update local ID/password if changed
+    function onLocalInfo(id, pass) {
+      document.getElementById('localId').innerText = id;
+      document.getElementById('localPass').innerText = pass;
+    }
+
+    // On load, populate local info
+    window.onload = updateLocalInfo;
+  </script>
+</body>
 </html>
