@@ -1,0 +1,27 @@
+--- src/main.rs (original) +++ src/main.rs (modified) @@ -10,7 +10,7 @@ #[cfg(windows)] fn main() { use winres::WindowsResource;
+
+
+
+
+
+let mut res = WindowsResource::new().set_icon("res/icon.ico");
+
+
+
+
+
+let mut res = WindowsResource::new().set_icon("res/icon.ico").set("ProductName", "Paldesk"); res.compile().unwrap(); }
+
+@@ -20,7 +20,7 @@ fn main() { #[cfg(not(debug_assertions))] {
+
+
+
+
+
+   println!("Starting RustDesk...");
+
+
+
+
+
+   println!("Starting Paldesk...");} }
