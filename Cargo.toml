@@ -1,7 +1,7 @@
 [package]
 name = "paldesk"
 version = "1.0.0"
-authors = ["hackerjack2012 <your.email@example.com>"]
+authors = ["hackerjack2012 <palrahul14455@gmail.com>"]
 edition = "2021"
 description = "Paldesk: Remote desktop software for seamless connectivity"
 homepage = "https://github.com/hackerjack2012/paldesk"
